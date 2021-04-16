@@ -3,7 +3,7 @@ defmodule BankingApi.AccountsController do
 
   alias BankingApi.User
 
-  action_fallback BankingApiWeb.FallbackController
+  action_fallback(BankingApiWeb.FallbackController)
 
   def withdraw(conn, params) do
     with {:ok, %User{} = user} <- BankingApi.withdraw(params) do
