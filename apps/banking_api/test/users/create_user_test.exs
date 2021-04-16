@@ -5,7 +5,11 @@ defmodule BankingApi.Users.CreateUserTest do
   alias BankingApi.Users.Create
 
   describe "call/1" do
+<<<<<<< HEAD
     test "when all params are valid, return an user" do
+=======
+    test "when all params are valid, returns an user" do
+>>>>>>> 8b09eb1e916ff3922b20ccffe0c117a7e354335c
       params = %{
         name: "Fulano",
         password: "123456",
@@ -18,7 +22,11 @@ defmodule BankingApi.Users.CreateUserTest do
       assert %User{name: "Fulano", id: ^user_id, email: "fulano@mail.com"} = user
     end
 
+<<<<<<< HEAD
     test "make balance 100000 when create account" do
+=======
+    test "when create the user, balance is 100000" do
+>>>>>>> 8b09eb1e916ff3922b20ccffe0c117a7e354335c
       params = %{
         name: "Fulano",
         password: "123456",
@@ -32,7 +40,11 @@ defmodule BankingApi.Users.CreateUserTest do
                user
     end
 
+<<<<<<< HEAD
     test "when the password have less than 6 characters, return an error" do
+=======
+    test "when the password have less than 6 characters, returns an error" do
+>>>>>>> 8b09eb1e916ff3922b20ccffe0c117a7e354335c
       params = %{
         name: "Fulano",
         password: "12345",
@@ -48,7 +60,11 @@ defmodule BankingApi.Users.CreateUserTest do
       assert errors_on(changeset) == expected_response
     end
 
+<<<<<<< HEAD
     test "when there is an invalid email, return an error" do
+=======
+    test "when there is an invalid email, returns an error" do
+>>>>>>> 8b09eb1e916ff3922b20ccffe0c117a7e354335c
       params = %{
         name: "Fulano",
         password: "123456",
@@ -63,6 +79,7 @@ defmodule BankingApi.Users.CreateUserTest do
 
       assert errors_on(changeset) == expected_response
     end
+<<<<<<< HEAD
 
     test "when email is already taken, return an error" do
       Repo.insert!(%User{
@@ -84,5 +101,7 @@ defmodule BankingApi.Users.CreateUserTest do
                 errors: [email: {"has already been taken", _other}]
               }} = Create.call(params)
     end
+=======
+>>>>>>> 8b09eb1e916ff3922b20ccffe0c117a7e354335c
   end
 end
