@@ -15,7 +15,7 @@ defmodule BankingApi.Accounts.WithdrawTest do
 
       params = %{"id" => user.id, "value" => 5000}
 
-      assert :ok = Withdraw.call(params)
+      assert {:ok, %User{email: "fulano@mail.com", name: "Fulano", id: _, balance: _, password: "123456"}} = Withdraw.call(params)
     end
 
     test "when ID are invalid, return error in get_user" do

@@ -7,7 +7,8 @@ defmodule BankingApi.Accounts.Withdraw do
 
   require Logger
 
-  def call(%{"id" => id, "value" => value}) do
+  def call(%{"id" => id, "value" => value}) when is_integer(value) do
+
     Multi.new()
     |> Multi.run(:get_user, fn repo, _changes ->
       User
@@ -26,18 +27,18 @@ defmodule BankingApi.Accounts.Withdraw do
       |> User.changeset(user)
       |> repo.update()
     end)
-    |> Multi.run(:validate_balance, fn _repo, %{update_user: %User{balance: updated_balance}} ->
-      if updated_balance >= 0 do
-        {:ok, :balance_updated}
+    |> Multi.run(:validate_balance, fn _repo, %{update_user: user} ->
+      if user.balance >= 0 do
+        {:ok, user}
       else
         {:error, :not_enough_funds}
       end
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, _} ->
+      {:ok, %{validate_balance: user}} ->
         Logger.info("Successfully done")
-        :ok
+        {:ok, user}
 
       {:error, error} ->
         Logger.error("Error in withdraw.", reason: inspect(error))
