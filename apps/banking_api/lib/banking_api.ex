@@ -8,9 +8,12 @@ defmodule BankingApi do
   """
 
   alias BankingApi.Users.Create, as: UserCreate
-  alias BankingApi.Accounts.Withdraw, as: AccountsWithdraw
+  alias BankingApi.Accounts.{Deposit, Transaction, Withdraw}
 
   defdelegate create_user(params), to: UserCreate, as: :call
-  defdelegate withdraw(params), to: AccountsWithdraw, as: :call
+
+  defdelegate deposit(params), to: Deposit, as: :call
+  defdelegate withdraw(params), to: Withdraw, as: :call
+  defdelegate transaction(params), to: Transaction, as: :call
 
 end

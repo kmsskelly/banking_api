@@ -1,10 +1,10 @@
-defmodule BankingApi.Accounts.WithdrawTest do
+defmodule BankingApi.Accounts.OperationTest do
   use BankingApi.DataCase, async: true
 
   alias BankingApi.{Repo, User}
-  alias BankingApi.Accounts.Withdraw
+  alias BankingApi.Accounts.Operation
 
-  describe "call/1" do
+  describe "call/2" do
     test "when ID and value are valid params, return success" do
       user =
         Repo.insert!(%User{
@@ -15,13 +15,13 @@ defmodule BankingApi.Accounts.WithdrawTest do
 
       params = %{"id" => user.id, "value" => 5000}
 
-      assert {:ok, %User{email: "fulano@mail.com", name: "Fulano", id: _, balance: _, password: "123456"}} = Withdraw.call(params)
+      assert {:ok, %User{email: "fulano@mail.com", name: "Fulano", id: _, balance: _, password: "123456"}} = Operation.call(params, :withdraw)
     end
 
     test "when ID are invalid, return error in get_user" do
       params = %{"id" => "#{Ecto.UUID.generate()}", "value" => 5000}
 
-      assert {:error, _error} = Withdraw.call(params)
+      assert {:error, _error} = Operation.call(params, :withdraw)
     end
 
     test "when there is no money in the account, returns not enough funds" do
@@ -35,7 +35,7 @@ defmodule BankingApi.Accounts.WithdrawTest do
 
       params = %{"id" => user.id, "value" => 5000}
 
-      assert {:error, _} = Withdraw.call(params)
+      assert {:error, _} = Operation.call(params, :withdraw)
     end
   end
 end

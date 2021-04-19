@@ -1,8 +1,8 @@
-defmodule BankingApi.Accounts.Withdraw do
+defmodule BankingApi.Accounts.Deposit do
   alias BankingApi.Accounts.Operation
 
   def call(params) do
     params
-    |> Operation.call(:withdraw)
+    |> Operation.call(:deposit)
   end
 end
