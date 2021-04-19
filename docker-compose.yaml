@@ -1,7 +1,7 @@
 version: '3.1'
 
 services:
-  postgres:
+  banking-api-db:
     image: postgres:13.2-alpine
     environment:
       POSTGRES_PASSWORD: postgres

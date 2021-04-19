@@ -21,7 +21,7 @@ defmodule BankingApi.Accounts.OperationTest do
     test "when ID are invalid, return error in get_user" do
       params = %{"id" => "#{Ecto.UUID.generate()}", "value" => 5000}
 
-      assert {:error, _error} = Operation.call(params, :withdraw)
+      assert {:error, :user_not_found} = Operation.call(params, :withdraw)
     end
 
     test "when there is no money in the account, returns not enough funds" do
@@ -35,7 +35,7 @@ defmodule BankingApi.Accounts.OperationTest do
 
       params = %{"id" => user.id, "value" => 5000}
 
-      assert {:error, _} = Operation.call(params, :withdraw)
+      assert {:error, :not_enough_funds} = Operation.call(params, :withdraw)
     end
   end
 end

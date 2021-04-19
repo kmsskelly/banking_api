@@ -1,4 +1,8 @@
 defmodule BankingApi.Accounts.Operation do
+  @moduledoc """
+  This module makes withdrawals and deposits.
+  """
+
   alias BankingApi.Repo
   alias BankingApi.User
   alias Ecto.Multi
@@ -7,6 +11,11 @@ defmodule BankingApi.Accounts.Operation do
 
   require Logger
 
+  @doc """
+  call function receives the user's account id, the value and the type of the operation.
+  First, if exists, it gets the user. Then, the operation is done and the balance is updated.
+  While the transaction is not finalized, the account is locked.
+  """
   def call(%{"id" => id, "value" => value}, operation) when is_integer(value) do
 
     Multi.new()

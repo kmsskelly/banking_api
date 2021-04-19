@@ -1,7 +1,7 @@
 defmodule BankingApiWeb.AccountsControllerTest do
   use BankingApiWeb.ConnCase, async: true
 
-  alias BankingApi.User
+  alias BankingApi.{Repo, User}
 
   describe "POST api/users/:id/withdraw" do
     setup %{conn: conn} do
@@ -69,6 +69,45 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "balance" => _balance,
                "id" => _id,
                "message" => "Ballance changed successfully"
+             } = response
+    end
+  end
+
+  describe "POST api/users/transaction" do
+    test "when all params are valid, make the transaction", ctx do
+      from_user =
+        Repo.insert!(%User{
+          name: "Fulano",
+          email: "fulano@mail.com",
+          password: "123456"
+        })
+
+      to_user =
+        Repo.insert!(%User{
+          name: "Fulana",
+          email: "fulana@mail.com",
+          password: "123456"
+        })
+
+      params = %{"from" => from_user.id, "to" => to_user.id, "value" => 500}
+
+      response =
+        ctx.conn
+        |> post("/api/users/transaction", params)
+        |> json_response(:ok)
+
+      assert %{
+               "message" => "Transaction done successfully",
+               "transaction" => %{
+                 "from_user" => %{
+                   "balance" => _balance1,
+                   "name" => "Fulano"
+                 },
+                 "to_user" => %{
+                   "balance" => _balance2,
+                   "name" => "Fulana"
+                 }
+               }
              } = response
     end
   end

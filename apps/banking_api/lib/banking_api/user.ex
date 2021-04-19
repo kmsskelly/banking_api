@@ -1,4 +1,11 @@
 defmodule BankingApi.User do
+  @moduledoc """
+  Defines the schema for users. Users have name, email, password and balance.
+  The balance must be an integer representing the value in cents.
+  When an user creates the account, he/she gets a bonus of 100000.
+  The password must have more than 6 characters.
+  THe balance must be positive or zero.
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -7,14 +14,17 @@ defmodule BankingApi.User do
   @required_params [:name, :email, :password]
 
   schema "users" do
-    field :name, :string
-    field :email, :string
-    field :password, :string
-    field :balance, :integer, default: 100000
+    field(:name, :string)
+    field(:email, :string)
+    field(:password, :string)
+    field(:balance, :integer, default: 100_000)
 
     timestamps()
   end
 
+  @doc """
+  Define validations and constraints.
+  """
   def changeset(params, struct \\ %__MODULE__{}) do
     struct
     |> cast(params, [:name, :email, :password, :balance])
