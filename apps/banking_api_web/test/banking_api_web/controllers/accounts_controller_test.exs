@@ -16,7 +16,7 @@ defmodule BankingApiWeb.AccountsControllerTest do
     end
 
     test "when all params are valid, make the withdraw", %{conn: conn, id: user_id} do
-      params = %{"value" => 5000}
+      params = %{"value" => 5_000}
 
       response =
         conn
@@ -24,14 +24,14 @@ defmodule BankingApiWeb.AccountsControllerTest do
         |> json_response(:ok)
 
       assert %{
-               "balance" => _balance,
-               "id" => _id,
+               "balance" => 95_000,
+               "id" => ^user_id,
                "message" => "Ballance changed successfully"
              } = response
     end
 
     test "when ID does not exist, return an error", %{conn: conn, id: _user_id} do
-      params = %{"value" => 5000}
+      params = %{"value" => 5_000}
       any_id = Ecto.UUID.generate()
 
       response =
@@ -58,7 +58,7 @@ defmodule BankingApiWeb.AccountsControllerTest do
     end
 
     test "when all params are valid, make the deposit", %{conn: conn, id: user_id} do
-      params = %{"value" => 5000}
+      params = %{"value" => 5_000}
 
       response =
         conn
@@ -66,15 +66,15 @@ defmodule BankingApiWeb.AccountsControllerTest do
         |> json_response(:ok)
 
       assert %{
-               "balance" => _balance,
-               "id" => _id,
+               "balance" => 105_000,
+               "id" => ^user_id,
                "message" => "Ballance changed successfully"
              } = response
     end
   end
 
   describe "POST api/users/transaction" do
-    test "when all params are valid, make the transaction", ctx do
+    setup %{conn: conn} do
       from_user =
         Repo.insert!(%User{
           name: "Fulano",
@@ -89,7 +89,13 @@ defmodule BankingApiWeb.AccountsControllerTest do
           password: "123456"
         })
 
-      params = %{"from" => from_user.id, "to" => to_user.id, "value" => 500}
+      {:ok, conn: conn, from_id: from_user.id, to_id: to_user.id}
+    end
+
+    test "when all params are valid, make the transaction", ctx do
+      from_id = ctx.from_id
+      to_id = ctx.to_id
+      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
 
       response =
         ctx.conn
@@ -100,12 +106,14 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "message" => "Transaction done successfully",
                "transaction" => %{
                  "from_user" => %{
-                   "balance" => _balance1,
-                   "name" => "Fulano"
+                   "balance" => 95_000,
+                   "name" => "Fulano",
+                   "id" => ^from_id
                  },
                  "to_user" => %{
-                   "balance" => _balance2,
-                   "name" => "Fulana"
+                   "balance" => 105_000,
+                   "name" => "Fulana",
+                   "id" => ^to_id
                  }
                }
              } = response

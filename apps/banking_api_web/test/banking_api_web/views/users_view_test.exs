@@ -1,4 +1,7 @@
 defmodule BankingApiWeb.UsersViewTest do
+  @moduledoc """
+  Tests de Users View.
+  """
   use BankingApiWeb.ConnCase, async: true
 
   import Phoenix.View
@@ -24,7 +27,7 @@ defmodule BankingApiWeb.UsersViewTest do
         id: user_id,
         name: "Fulano",
         email: "fulano@mail.com",
-        balance: 100000
+        balance: 100_000
       }
     }
 

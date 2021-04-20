@@ -4,7 +4,6 @@ defmodule BankingApiWeb.UsersControllerTest do
   alias BankingApi.Repo
   alias BankingApi.User
 
-
   describe "POST api/users" do
     test "return sucess when params are valid", ctx do
       params = %{
