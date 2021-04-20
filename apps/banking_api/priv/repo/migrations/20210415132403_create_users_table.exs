@@ -7,7 +7,7 @@ defmodule BankingApi.Repo.Migrations.CreateUsersTable do
       add :name, :string
       add :email, :string
       add :password, :string
-      add :balance, :integer
+      add :balance, :bigint
 
       timestamps()
     end
