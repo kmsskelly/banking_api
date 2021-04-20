@@ -1,3 +1,0 @@
-# BankingApi
-
-**TODO: Add description**
