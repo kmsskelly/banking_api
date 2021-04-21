@@ -12,12 +12,11 @@ defmodule BankingApi.Accounts.Operation do
   require Logger
 
   @doc """
-  call function receives the user's account id, the value and the type of the operation.
+  'call/2' function receives the user's account id, the value and the type of the operation.
   First, if exists, it gets the user. Then, the operation is done and the balance is updated.
   While the transaction is not finalized, the account is locked.
   """
   def call(%{"id" => id, "value" => value}, operation) when is_integer(value) do
-
     Multi.new()
     |> Multi.run(:get_user, fn repo, _changes ->
       User
@@ -61,5 +60,4 @@ defmodule BankingApi.Accounts.Operation do
 
   defp do_operation(user, value, :withdraw), do: user.balance - value
   defp do_operation(user, value, :deposit), do: user.balance + value
-
 end

@@ -4,8 +4,5 @@ defmodule BankingApi.Accounts.Deposit do
   """
   alias BankingApi.Accounts.Operation
 
-  def call(params) do
-    params
-    |> Operation.call(:deposit)
-  end
+  def call(params), do: Operation.call(params, :deposit)
 end

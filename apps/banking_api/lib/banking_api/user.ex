@@ -27,7 +27,7 @@ defmodule BankingApi.User do
   """
   def changeset(params, struct \\ %__MODULE__{}) do
     struct
-    |> cast(params, [:name, :email, :password, :balance])
+    |> cast(params, __schema__(:fields))
     |> validate_required(@required_params)
     |> validate_length(:password, min: 6)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/)
