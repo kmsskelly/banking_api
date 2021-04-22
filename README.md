@@ -12,7 +12,7 @@ docker-compose up -d
 - If you don't want to use docker-compose, you can run:
 
 ```sh
- docker run --name banking-api-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=banking_api_dev -d postgres
+ docker run --name banking-api-db -p 5432:5432 -e POSTGRES_PASSWORD=banking_api_pass -e POSTGRES_USER=banking_api_user -e POSTGRES_DB=banking-api-db -d postgres
 ```
 
 To start your Phoenix server:
