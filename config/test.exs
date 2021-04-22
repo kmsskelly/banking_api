@@ -1,8 +1,8 @@
 import Config
 
 config :banking_api, BankingApi.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "banking_api_user",
+  password: "banking_api_pass",
   database: "banking_api_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

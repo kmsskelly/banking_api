@@ -4,6 +4,7 @@ services:
   banking-api-db:
     image: postgres:13.2-alpine
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: banking_api_user
+      POSTGRES_PASSWORD: banking_api_pass
     ports:
       - 5432:5432

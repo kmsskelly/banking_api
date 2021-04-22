@@ -1,9 +1,9 @@
 import Config
 
 config :banking_api, BankingApi.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "banking_api_dev",
+  username: "banking_api_user",
+  password: "banking_api_pass",
+  database: "banking-api-db",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
