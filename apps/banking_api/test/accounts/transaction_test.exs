@@ -1,4 +1,7 @@
 defmodule BankingApi.Accounts.TransactionTest do
+  @moduledoc """
+  This module makes transactions between users.
+  """
   use BankingApi.DataCase, async: true
 
   alias BankingApi.Accounts.Transaction
@@ -45,9 +48,21 @@ defmodule BankingApi.Accounts.TransactionTest do
               }} = Transaction.call(params)
     end
 
-    test "when some ID are invalid, return error in get_user" do
+    test "when sender user's ID are invalid, return error in get_from_user step", ctx do
+      to_id = ctx.second_user
       params = %{
         "from" => "#{Ecto.UUID.generate()}",
+        "to" => to_id,
+        "value" => 500
+      }
+
+      assert {:error, :user_not_found} = Transaction.call(params)
+    end
+
+    test "when receiver user's ID are invalid, return error in get_to_user step", ctx do
+      from_id = ctx.first_user
+      params = %{
+        "from" => from_id,
         "to" => "#{Ecto.UUID.generate()}",
         "value" => 500
       }

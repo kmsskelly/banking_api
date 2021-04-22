@@ -23,7 +23,7 @@ defmodule BankingApi.Accounts.TransactionsResponse do
     |> where([u], u.id == ^id)
     |> Repo.one()
     |> case do
-      nil -> {:error, :receiver_user_not_found}
+      nil -> {:error, :user_not_found}
       %User{} = user -> user
     end
   end

@@ -34,18 +34,14 @@ defmodule BankingApi.Accounts.Transaction do
         {:error, :not_enough_funds}
       end
     end)
-    |> Multi.merge(fn _changes ->
-      Multi.new()
-      |> Multi.run(:get_to_user, fn _repo, _changes ->
-        get_user(to_id)
-      end)
-      |> Multi.run(:update_to_user, fn repo, %{get_to_user: user} ->
-        params = %{balance: user.balance + value}
-
-        params
-        |> User.changeset(user)
-        |> repo.update()
-      end)
+    |> Multi.run(:get_to_user, fn _repo, _changes ->
+      get_user(to_id)
+    end)
+    |> Multi.run(:update_to_user, fn repo, %{get_to_user: user} ->
+      params = %{balance: user.balance + value}
+      params
+      |> User.changeset(user)
+      |> repo.update()
     end)
     |> Repo.transaction()
     |> case do
