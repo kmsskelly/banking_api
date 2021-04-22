@@ -17,7 +17,10 @@ defmodule BankingApiWeb.AccountsControllerTest do
       {:ok, conn: conn, id: user_id}
     end
 
-    test "when all params are valid, make the withdraw", %{conn: conn, id: user_id} do
+    test "when all params are valid, make the withdraw", %{
+      conn: conn,
+      id: user_id
+    } do
       params = %{"value" => 5_000}
 
       response =
@@ -32,10 +35,11 @@ defmodule BankingApiWeb.AccountsControllerTest do
              } = response
     end
 
-    test "after make a withdrawal, when doing a query in BD, return the updated user", %{
-      conn: conn,
-      id: user_id
-    } do
+    test "after make a withdrawal, when doing a query in BD, return the updated user",
+         %{
+           conn: conn,
+           id: user_id
+         } do
       params = %{"value" => 5_000}
       id = user_id
 
@@ -69,7 +73,10 @@ defmodule BankingApiWeb.AccountsControllerTest do
              } = response
     end
 
-    test "when there is not enough money, return an error", %{conn: conn, id: user_id} do
+    test "when there is not enough money, return an error", %{
+      conn: conn,
+      id: user_id
+    } do
       params = %{"value" => 100_001}
 
       response =
@@ -95,7 +102,10 @@ defmodule BankingApiWeb.AccountsControllerTest do
       {:ok, conn: conn, id: user_id}
     end
 
-    test "when all params are valid, make the deposit", %{conn: conn, id: user_id} do
+    test "when all params are valid, make the deposit", %{
+      conn: conn,
+      id: user_id
+    } do
       params = %{"value" => 5_000}
 
       response =
@@ -110,10 +120,11 @@ defmodule BankingApiWeb.AccountsControllerTest do
              } = response
     end
 
-    test "after make a deposit, when doing a query in BD, return the updated user", %{
-      conn: conn,
-      id: user_id
-    } do
+    test "after make a deposit, when doing a query in BD, return the updated user",
+         %{
+           conn: conn,
+           id: user_id
+         } do
       params = %{"value" => 5_000}
       id = user_id
 
@@ -195,13 +206,10 @@ defmodule BankingApiWeb.AccountsControllerTest do
              } = response
     end
 
-    test "after make a transaction, when doing a query in BD, return the updated users", ctx do
+    test "after make a transaction, when doing a query in BD, return the updated users",
+         ctx do
       from_id = ctx.first_id
       to_id = ctx.second_id
-      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
-
-      ctx.conn
-      |> post("/api/users/transaction", params)
 
       stream =
         User
@@ -212,18 +220,24 @@ defmodule BankingApiWeb.AccountsControllerTest do
 
       assert {:ok,
               [
-                %User{name: "Fulano", password: "123456", id: ^from_id, balance: 95_000},
+                %User{
+                  name: "Fulano",
+                  password: "123456",
+                  id: ^from_id,
+                  balance: 100_000
+                },
                 %User{
                   name: "Fulana",
                   password: "123456",
                   email: "fulana@mail.com",
                   id: ^to_id,
-                  balance: 5_000
+                  balance: 0
                 }
               ]} = response
     end
 
-    test "when there is not enough money in the sender's account, return an error", ctx do
+    test "when there is not enough money in the sender's account, return an error",
+         ctx do
       from_id = ctx.second_id
       to_id = ctx.first_id
       params = %{"from" => from_id, "to" => to_id, "value" => 5_000}

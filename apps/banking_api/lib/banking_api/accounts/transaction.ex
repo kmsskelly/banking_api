@@ -39,14 +39,15 @@ defmodule BankingApi.Accounts.Transaction do
     end)
     |> Multi.run(:update_to_user, fn repo, %{get_to_user: user} ->
       params = %{balance: user.balance + value}
+
       params
       |> User.changeset(user)
       |> repo.update()
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{update_to_user: _user}} ->
-        {:ok, TransactionsResponse.build(from_id, to_id)}
+      {:ok, %{update_to_user: to_user, update_from_user: from_user}} ->
+        {:ok, %TransactionsResponse{to_user: to_user, from_user: from_user}}
 
       {:error, error} ->
         Logger.error("Error in transaction.", reason: inspect(error))
