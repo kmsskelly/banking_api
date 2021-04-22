@@ -3,6 +3,8 @@ defmodule BankingApiWeb.AccountsControllerTest do
 
   alias BankingApi.{Repo, User}
 
+  import Ecto.Query
+
   describe "POST api/users/:id/withdraw" do
     setup %{conn: conn} do
       params = %{
@@ -27,6 +29,29 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "balance" => 95_000,
                "id" => ^user_id,
                "message" => "Ballance changed successfully"
+             } = response
+    end
+
+    test "after make a withdrawal, when doing a query in BD, return the updated user", %{
+      conn: conn,
+      id: user_id
+    } do
+      params = %{"value" => 5_000}
+      id = user_id
+
+      conn
+      |> post("/api/users/#{user_id}/withdraw", params)
+
+      response =
+        User
+        |> where([u], u.id == ^id)
+        |> Repo.one()
+
+      assert %User{
+               name: "Fulano",
+               password: "123456",
+               id: ^user_id,
+               balance: 95_000
              } = response
     end
 
@@ -82,6 +107,29 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "balance" => 105_000,
                "id" => ^user_id,
                "message" => "Ballance changed successfully"
+             } = response
+    end
+
+    test "after make a deposit, when doing a query in BD, return the updated user", %{
+      conn: conn,
+      id: user_id
+    } do
+      params = %{"value" => 5_000}
+      id = user_id
+
+      conn
+      |> post("/api/users/#{user_id}/deposit", params)
+
+      response =
+        User
+        |> where([u], u.id == ^id)
+        |> Repo.one()
+
+      assert %User{
+               name: "Fulano",
+               password: "123456",
+               id: ^user_id,
+               balance: 105_000
              } = response
     end
 
@@ -145,6 +193,34 @@ defmodule BankingApiWeb.AccountsControllerTest do
                  }
                }
              } = response
+    end
+
+    test "after make a transaction, when doing a query in BD, return the updated users", ctx do
+      from_id = ctx.first_id
+      to_id = ctx.second_id
+      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
+
+      ctx.conn
+      |> post("/api/users/transaction", params)
+
+      stream =
+        User
+        |> where([u], u.id == ^from_id or u.id == ^to_id)
+        |> Repo.stream()
+
+      response = Repo.transaction(fn -> Enum.to_list(stream) end)
+
+      assert {:ok,
+              [
+                %User{name: "Fulano", password: "123456", id: ^from_id, balance: 95_000},
+                %User{
+                  name: "Fulana",
+                  password: "123456",
+                  email: "fulana@mail.com",
+                  id: ^to_id,
+                  balance: 5_000
+                }
+              ]} = response
     end
 
     test "when there is not enough money in the sender's account, return an error", ctx do
