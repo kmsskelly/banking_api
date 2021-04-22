@@ -43,6 +43,19 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "message" => "user_not_found"
              } = response
     end
+
+    test "when there is not enough money, return an error", %{conn: conn, id: user_id} do
+      params = %{"value" => 100_001}
+
+      response =
+        conn
+        |> post("/api/users/#{user_id}/withdraw", params)
+        |> json_response(:bad_request)
+
+      assert %{
+               "message" => "not_enough_funds"
+             } = response
+    end
   end
 
   describe "POST api/users/:id/deposit" do
@@ -71,30 +84,45 @@ defmodule BankingApiWeb.AccountsControllerTest do
                "message" => "Ballance changed successfully"
              } = response
     end
+
+    test "when ID does not exist, return an error", %{conn: conn, id: _user_id} do
+      params = %{"value" => 5_000}
+      any_id = Ecto.UUID.generate()
+
+      response =
+        conn
+        |> post("/api/users/#{any_id}/deposit", params)
+        |> json_response(:bad_request)
+
+      assert %{
+               "message" => "user_not_found"
+             } = response
+    end
   end
 
   describe "POST api/users/transaction" do
     setup %{conn: conn} do
-      from_user =
+      first_user =
         Repo.insert!(%User{
           name: "Fulano",
           email: "fulano@mail.com",
           password: "123456"
         })
 
-      to_user =
+      second_user =
         Repo.insert!(%User{
           name: "Fulana",
           email: "fulana@mail.com",
-          password: "123456"
+          password: "123456",
+          balance: 0
         })
 
-      {:ok, conn: conn, from_id: from_user.id, to_id: to_user.id}
+      {:ok, conn: conn, first_id: first_user.id, second_id: second_user.id}
     end
 
     test "when all params are valid, make the transaction", ctx do
-      from_id = ctx.from_id
-      to_id = ctx.to_id
+      from_id = ctx.first_id
+      to_id = ctx.second_id
       params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
 
       response =
@@ -111,11 +139,56 @@ defmodule BankingApiWeb.AccountsControllerTest do
                    "id" => ^from_id
                  },
                  "to_user" => %{
-                   "balance" => 105_000,
+                   "balance" => 5_000,
                    "name" => "Fulana",
                    "id" => ^to_id
                  }
                }
+             } = response
+    end
+
+    test "when there is not enough money in the sender's account, return an error", ctx do
+      from_id = ctx.second_id
+      to_id = ctx.first_id
+      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
+
+      response =
+        ctx.conn
+        |> post("/api/users/transaction", params)
+        |> json_response(:bad_request)
+
+      assert %{
+               "message" => "not_enough_funds"
+             } = response
+    end
+
+    test "when the sender's ID is not valid, return an error", ctx do
+      from_id = Ecto.UUID.generate()
+      to_id = ctx.second_id
+      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
+
+      response =
+        ctx.conn
+        |> post("/api/users/transaction", params)
+        |> json_response(:bad_request)
+
+      assert %{
+               "message" => "user_not_found"
+             } = response
+    end
+
+    test "when the receiver's ID is not valid, return an error", ctx do
+      from_id = ctx.first_id
+      to_id = Ecto.UUID.generate()
+      params = %{"from" => from_id, "to" => to_id, "value" => 5_000}
+
+      response =
+        ctx.conn
+        |> post("/api/users/transaction", params)
+        |> json_response(:bad_request)
+
+      assert %{
+               "message" => "user_not_found"
              } = response
     end
   end
