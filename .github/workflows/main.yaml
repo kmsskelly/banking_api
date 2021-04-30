@@ -39,3 +39,7 @@ jobs:
 
     - name: Run Tests
       run: mix test
+      env:
+      DB_USER: banking_api_user
+      DB_PASSWORD: banking_api_pass
+      DB_HOST: postgres
